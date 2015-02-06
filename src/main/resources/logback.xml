@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+################################################################################
+## Central Logging configuration file for Spring Boot Application
+################################################################################
+-->
+
+<configuration debug="false" scan="true" scanPeriod="5 minutes"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="logback.xsd">
+
+	<!-- used to support the jul-to-slf4j bridge -->
+	<contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+		<resetJUL>true</resetJUL>
+	</contextListener>
+
+	<appender name="stdout-dev" class="ch.qos.logback.core.ConsoleAppender">
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter"> <level>DEBUG</level> </filter>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<!-- see http://logback.qos.ch/manual/layouts.html -->
+			<pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} %-5level %60.60(%logger{16} %class{0}:%line %thread) - %message%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter"> <level>INFO</level> </filter>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<!-- see http://logback.qos.ch/manual/layouts.html -->
+			<pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger - %message%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="logfileout" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<append>true</append>
+		<file>./logs/app.log</file>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<!-- <pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %X{sessionId} 
+				%class:%line - %message%n</pattern> -->
+			<pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger - %message%n</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>./logs/app-%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+			<maxHistory>60</maxHistory>
+		</rollingPolicy>
+	</appender>
+
+	<!-- Application Loggers -->
+	<logger name="org" level="WARN" />
+	<logger name="jndi" level="WARN" />
+	<logger name="sun" level="WARN" />
+	<logger name="com" level="WARN" />
+	<logger name="net" level="WARN" />
+	<logger name="grails" level="WARN" />
+	<logger name="org.eclipse.jetty" level="WARN" />
+	<logger name="java" level="WARN" />
+
+	<logger name="ch.qos.logback" level="WARN" />
+	<!-- <logger name="org.springframework.beans.factory" level="DEBUG"/> -->
+	<logger name="org.springframework.beans.factory.support.AbstractBeanFactory" level="WARN" />
+	
+	<!-- turn this to DEBUG to see autoconfigure bean info -->
+	<logger name="org.springframework.boot.autoconfigure.logging" level="INFO"/>
+	<!-- turn this to DEBUG to see loading configuration files -->
+	<logger name="org.springframework.boot.context.config" level="INFO"/>
+	<logger name="org.springframework.web.filter" level="INFO"/>
+	
+	<logger name="org.springframework.boot" level="DEBUG" />
+
+	<logger name="org.vertx" level="INFO" />
+
+	<logger name="com.ssp" level="DEBUG" />
+	<!-- set this log level to DEBUG to enable logging all the incoming/outgoing traffic -->
+	<logger name="*.RequestResponseLogger" level="DEBUG" />
+
+	<!-- Root Logger -->
+	<root level="debug">
+		<appender-ref ref="stdout-dev" />
+		<!-- <appender-ref ref="stdout"/> <appender-ref ref="logfileout"/> -->
+	</root>
+
+</configuration>

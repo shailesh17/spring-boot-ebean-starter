@@ -1,0 +1,111 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.1.10.RELEASE")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'spring-boot'
+
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+
+sourceCompatibility = '1.7'
+targetCompatibility = '1.7'
+
+configurations {
+  //provided
+  //compile.extendsFrom provided
+  //testCompile.extendsFrom provided
+  all*.exclude group: 'commons-logging', module: 'commons-logging'
+  all*.exclude group: 'log4j', module: 'log4j'
+}
+eclipse {
+	classpath {
+		//customizing the classes output directory:
+		defaultOutputDir = file('target/classes')
+	}
+}
+
+springBoot {
+	mainClass = "com.ssp.web.Application"
+}
+
+jar {
+    baseName = 'spring-boot'
+    version =  '0.0.1-SNAPSHOT'
+}
+
+repositories {
+    mavenCentral()
+}
+
+
+//task run(type:JavaExec) {
+//	main = 'com.sp.model.HelloEbean'
+//	classpath = sourceSets.main.runtimeClasspath
+// }
+
+dependencies {
+
+	// SLF4J Logging API
+	['slf4j-api'
+	 ,'jcl-over-slf4j'     // replaces commons-logging to use slf4j
+	 ,'log4j-over-slf4j'   // replaces log4j to use slf4
+	 ,'jul-to-slf4j'       // replaces java.util.logging to use slf4j
+	].each { a ->
+		compile "org.slf4j:$a:1.7.10"
+	}
+
+	compile "ch.qos.logback:logback-classic:1.1.2" // core logging implementation
+	compile "org.apache.commons:commons-lang3:3.3.2" // commons lang
+	compile "commons-io:commons-io:2.4"
+	
+	// Bean Validation
+	compile('javax.validation:validation-api:1.1.0.Final')
+	
+	// Ebean
+	compile('org.avaje.ebeanorm:avaje-ebeanorm:4.1.5')
+	compile('org.avaje.ebeanorm:avaje-ebeanorm-agent:4.1.5')
+	compile('org.avaje:avaje-agentloader:1.1.1')
+  
+
+	// tag::jetty[]
+	compile("org.springframework.boot:spring-boot-starter-web:1.2.1.RELEASE") {
+	  exclude module: "spring-boot-starter-tomcat"
+	  exclude group: 'commons-logging'
+	  exclude group: 'org.slf4j'
+	}
+
+	compile("org.springframework.boot:spring-boot-starter-jetty:1.2.1.RELEASE")
+	// end::jetty[]
+	// tag::actuator[]
+	// If you are building a web site for your business, you probably need to add some management services.
+	// Spring Boot provides several out of the box with its actuator module, such as health, audits, beans, and more.
+	compile("org.springframework.boot:spring-boot-starter-actuator:1.2.1.RELEASE")
+	// end::actuator[]
+
+  	// test only
+	testCompile("junit:junit:4.10")
+    testCompile("org.springframework.boot:spring-boot-starter-test:1.2.1.RELEASE")
+
+	// db connection pool
+	runtime('org.apache.commons:commons-dbcp2:2.0.1'){
+	  exclude group: 'commons-logging'
+	  exclude group: 'junit', module:'junit'
+	}
+	
+	// h2 database driver 
+	runtime("com.h2database:h2:1.3.176")
+	
+	// mysql database driver 
+	runtime "mysql:mysql-connector-java:5.1.34"
+
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.2.1'
+}
